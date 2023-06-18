@@ -60,5 +60,40 @@ def main(file_name):
             print('Have a nice day!')
             return
         
+def confirmation(text: str):
+    confirm = input(f"Подтвердите {text} записи: y - да, n - нет\n")
+    while confirm not in ('y', 'n'):
+        print('Введены неверные данные')
+        confirm = input(f"Подтвердите {text} записи: y - да, n - нет\n")
+    return confirm
+
+
+def replace_record_line(file_name: str, record_id, replaced_line: str):
+    replaced = ''
+    with open(file_name, 'r', encoding='utf-8') as data:
+        for line in data:
+            replaced += line
+            if record_id == line.split(';', 1)[0]:
+                replaced = replaced.replace(line, replaced_line)
+    with open(file_name, 'w', encoding='utf-8') as data:
+        data.write(replaced)
+
+
+def change_records(file_name: str):
+    record_id = check_id_record(file_name, 'изменить')
+    if record_id != 'q':
+        replaced_line = f'{int(record_id)};' + ';'.join(
+            input('Введите фамилию, имя, отчество, номер телефона через пробел\n').split()[:4]) + ';\n'
+        confirm = confirmation('изменение')
+        if confirm == 'y':
+            replace_record_line(file_name, record_id, replaced_line)
+
+
+def delete_records(file_name: str):
+    record_id = check_id_record(file_name, 'удалить')
+    if record_id != 'q':
+        confirm = confirmation('удаление')
+        if confirm == 'y':
+            replace_record_line(file_name, record_id, '')
 
 main('test.txt')
